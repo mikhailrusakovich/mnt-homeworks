@@ -1,31 +1,31 @@
 ---
-- name: Install Elasticsearch
+- name: Install Elasticsearch # install elasticsearch play
   hosts: el-instance
-  handlers:
+  handlers: # handler creating elasticsearch restart
     - name: restart Elasticsearch
-      become: true
+      become: true # выполнение handler с повышенными привилегиями
       service:
         name: elasticsearch
         state: restarted
-  tasks:
+  tasks: # загружаем по ссылке elasticsearch и размещаем в папке на managed-node
     - name: "Download Elasticsearch's rpm"
       get_url:
         url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
         dest: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
       register: download_elastic
       until: download_elastic is succeeded
-    - name: Install Elasticsearch
+    - name: Install Elasticsearch # производим установку elasticsearch
       become: true
       yum:
         name: "/tmp/elasticsearch-{{ elk_stack_version }}-x86_64.rpm"
         state: present
-    - name: Configure Elasticsearch
+    - name: Configure Elasticsearch # производим конфигурирование elasticsearch с помощью загрузки образца конфигурации с control node
       become: true
       template:
         src: elasticsearch.yml.j2
         dest: /etc/elasticsearch/elasticsearch.yml
       notify: restart Elasticsearch
-- name: Install Kibana
+- name: Install Kibana # установка Kibana по схеме установки elasticsearch с изменением образца конфигурации для Kibana
   hosts: ki-instance
   handlers:
     - name: restart kibana
@@ -51,7 +51,7 @@
         src: kibana.yml.j2
         dest: /etc/kibana/kibana.yml
       notify: restart kibana
-- name: Install Filebeat
+- name: Install Filebeat # установка filebeat аналогично установки Kibana и Elasticsearch
   hosts: f-instance
   handlers:
     - name: restart filebeat
