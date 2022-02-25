@@ -1,0 +1,5 @@
+---
+- name: Assert elasticsearch_role
+  hosts: all
+  roles:
+    - elasticsearch_role
