@@ -9,8 +9,7 @@
 Наша основная цель - разбить наш playbook на отдельные roles. Задача: сделать roles для elastic, kibana, filebeat и написать playbook для использования этих ролей. Ожидаемый результат: существуют два ваших репозитория с roles и один репозиторий с playbook.
 
 1. Создать в старой версии playbook файл `requirements.yml` и заполнить его следующим содержимым:
-   ```
-   yaml
+   ```yaml
    ---
      - src: git@github.com:netology-code/mnt-homeworks-ansible.git
        scm: git
