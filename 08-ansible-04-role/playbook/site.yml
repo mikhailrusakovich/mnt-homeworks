@@ -1,5 +1,13 @@
 ---
 - name: Assert elasticsearch_role
-  hosts: all
+  hosts: el
   roles:
     - elasticsearch_role
+- name: Assert kibana-role
+  hosts: el2
+  roles:
+    - kibana-role
+- name: Assert filebeat-role
+  hosts: el3
+  roles:
+    - filebeat-role
