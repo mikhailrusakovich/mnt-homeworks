@@ -651,10 +651,76 @@ INFO     Pruning extra files from scenario ephemeral directory
 
 1. Запустите `docker run --privileged=True -v <path_to_repo>:/opt/elasticsearch-role -w /opt/elasticsearch-role -it <image_name> /bin/bash`, где path_to_repo - путь до корня репозитория с elasticsearch-role на вашей файловой системе.
 2. Внутри контейнера выполните команду `tox`, посмотрите на вывод.
+```
+py36-ansible28 create: /opt/elasticsearch-role/.tox/py36-ansible28
+py36-ansible28 installdeps: -rtest-requirements.txt, ansible<2.9
+py36-ansible28 installed: ansible==2.8.20,ansible-compat==1.0.0,ansible-lint==5.4.0,arrow==1.2.2,bcrypt==3.2.0,binaryornot==0.4.4,bracex==2.2.1,cached-property==1.5.2,Cerberus==1.3.2,certifi==2021.10.8,cffi==1.15.0,chardet==4.0.0,charset-normalizer==2.0.12,click==8.0.4,click-help-colors==0.9.1,colorama==0.4.4,commonmark==0.9.1,cookiecutter==1.7.3,cryptography==36.0.1,dataclasses==0.8,distro==1.7.0,docker==5.0.3,enrich==1.2.7,idna==3.3,importlib-metadata==4.8.3,Jinja2==3.0.3,jinja2-time==0.2.0,MarkupSafe==2.0.1,molecule==3.4.0,molecule-docker==1.1.0,packaging==21.3,paramiko==2.9.2,pathspec==0.9.0,pluggy==0.13.1,poyo==0.5.0,pycparser==2.21,Pygments==2.11.2,PyNaCl==1.5.0,pyparsing==3.0.7,python-dateutil==2.8.2,python-slugify==6.1.1,PyYAML==5.4.1,requests==2.27.1,rich==11.2.0,ruamel.yaml==0.17.21,ruamel.yaml.clib==0.2.6,selinux==0.2.1,six==1.16.0,subprocess-tee==0.3.5,tenacity==8.0.1,text-unidecode==1.3,typing_extensions==4.1.1,urllib3==1.26.8,wcmatch==8.3,websocket-client==1.3.1,yamllint==1.26.3,zipp==3.6.0
+py36-ansible28 run-test-pre: PYTHONHASHSEED='1064376408'
+[root@7d0d92e7a13b elasticsearch-role]# tox
+py36-ansible28 create: /opt/elasticsearch-role/.tox/py36-ansible28
+py36-ansible28 installdeps: -rtest-requirements.txt, ansible<2.9
+py36-ansible28 installed: ansible==2.8.20,ansible-compat==1.0.0,ansible-lint==5.4.0,arrow==1.2.2,bcrypt==3.2.0,binaryornot==0.4.4,bracex==2.2.1,cached-property==1.5.2,Cerberus==1.3.2,certifi==2021.10.8,cffi==1.15.0,chardet==4.0.0,charset-normalizer==2.0.12,click==8.0.4,click-help-colors==0.9.1,colorama==0.4.4,commonmark==0.9.1,cookiecutter==1.7.3,cryptography==36.0.1,dataclasses==0.8,distro==1.7.0,docker==5.0.3,enrich==1.2.7,idna==3.3,importlib-metadata==4.8.3,Jinja2==3.0.3,jinja2-time==0.2.0,MarkupSafe==2.0.1,molecule==3.4.0,molecule-docker==1.1.0,packaging==21.3,paramiko==2.9.2,pathspec==0.9.0,pluggy==0.13.1,poyo==0.5.0,pycparser==2.21,Pygments==2.11.2,PyNaCl==1.5.0,pyparsing==3.0.7,python-dateutil==2.8.2,python-slugify==6.1.1,PyYAML==5.4.1,requests==2.27.1,rich==11.2.0,ruamel.yaml==0.17.21,ruamel.yaml.clib==0.2.6,selinux==0.2.1,six==1.16.0,subprocess-tee==0.3.5,tenacity==8.0.1,text-unidecode==1.3,typing_extensions==4.1.1,urllib3==1.26.8,wcmatch==8.3,websocket-client==1.3.1,yamllint==1.26.3,zipp==3.6.0
+py36-ansible28 run-test-pre: PYTHONHASHSEED='3526761901'
+py36-ansible30 create: /opt/elasticsearch-role/.tox/py36-ansible30
+___________________________________________________________________________________ summary ___________________________________________________________________________________
+  py36-ansible28: commands succeeded
+
+```
 3. Добавьте файл `tox.ini` в корень репозитория каждой своей роли.
+```
+[tox]
+minversion = 1.8
+basepython = python3.6
+envlist = py{36,39}-ansible{28,30}
+skipsdist = true
+
+[testenv]
+deps =
+    -r test-requirements.txt
+    ansible28: ansible<2.9
+    ansible29: ansible<2.10
+    ansible210: ansible<3.0
+    ansible30: ansible<3.1
+```
 4. Создайте облегчённый сценарий для `molecule`. Проверьте его на исполнимость.
+```commandline
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: instance
+    image: docker.io/pycontribs/centos:7
+    pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    - destroy
+
+```
 5. Пропишите правильную команду в `tox.ini` для того чтобы запускался облегчённый сценарий.
+```commandline
+commands =
+    {posargs:molecule test -s alternative --destroy=always}
+```
 6. Запустите `docker` контейнер так, чтобы внутри оказались обе ваши роли.
+```commandline
+[root@7d0d92e7a13b elasticsearch-role]# tox
+py36-ansible28 installed: ansible==2.8.20,ansible-compat==1.0.0,ansible-lint==5.4.0,arrow==1.2.2,bcrypt==3.2.0,binaryornot==0.4.4,bracex==2.2.1,cached-property==1.5.2,Cerberus==1.3.2,certifi==2021.10.8,cffi==1.15.0,chardet==4.0.0,charset-normalizer==2.0.12,click==8.0.4,click-help-colors==0.9.1,colorama==0.4.4,commonmark==0.9.1,cookiecutter==1.7.3,cryptography==36.0.1,dataclasses==0.8,distro==1.7.0,docker==5.0.3,enrich==1.2.7,idna==3.3,importlib-metadata==4.8.3,Jinja2==3.0.3,jinja2-time==0.2.0,MarkupSafe==2.0.1,molecule==3.4.0,molecule-docker==1.1.0,packaging==21.3,paramiko==2.9.2,pathspec==0.9.0,pluggy==0.13.1,poyo==0.5.0,pycparser==2.21,Pygments==2.11.2,PyNaCl==1.5.0,pyparsing==3.0.7,python-dateutil==2.8.2,python-slugify==6.1.1,PyYAML==5.4.1,requests==2.27.1,rich==11.2.0,ruamel.yaml==0.17.21,ruamel.yaml.clib==0.2.6,selinux==0.2.1,six==1.16.0,subprocess-tee==0.3.5,tenacity==8.0.1,text-unidecode==1.3,typing_extensions==4.1.1,urllib3==1.26.8,wcmatch==8.3,websocket-client==1.3.1,yamllint==1.26.3,zipp==3.6.0
+py36-ansible28 run-test-pre: PYTHONHASHSEED='3173382637'
+py36-ansible30 create: /opt/elasticsearch-role/.tox/py36-ansible30
+ERROR: cowardly refusing to delete `envdir` (it does not look like a virtualenv): /opt/elasticsearch-role/.tox/py36-ansible30
+___________________________________________________________________________________ summary ___________________________________________________________________________________
+  py36-ansible28: commands succeeded
+
+```
 7. Зайдти поочерёдно в каждую из них и запустите команду `tox`. Убедитесь, что всё отработало успешно.
 8. Добавьте новый тег на коммит с рабочим сценарием в соответствии с семантическим версионированием.
 
