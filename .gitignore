@@ -3,3 +3,4 @@
 files
 /08-ansible-04-role/playbook/roles/kibana-role/molecule/default/files/
 /08-ansible-04-role/playbook/roles/filebeat-role/molecule/default/files/
+__init__.py

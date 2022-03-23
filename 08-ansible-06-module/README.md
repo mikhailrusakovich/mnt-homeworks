@@ -157,8 +157,59 @@ if __name__ == '__main__':
 
 3. Заполните файл в соответствии с требованиями ansible так, чтобы он выполнял основную задачу: module должен создавать текстовый файл на удалённом хосте по пути, определённом в параметре `path`, с содержимым, определённым в параметре `content`.
 4. Проверьте module на исполняемость локально.
+```commandline
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ python -m ansible.modules.my_own_module input.json 
+
+{"changed": true, "original_message": "content of the file", "message": "file was written", "invocation": {"module_args": {"path": "/tmp/test.txt", "content": "content of the file"}}}
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp/test.txt 
+content of the file 
+```
 5. Напишите single task playbook и используйте module в нём.
+```commandline
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ ansible-playbook ./playbooks/site.yml 
+[WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out features under
+development. This is a rapidly changing source of code and can become unstable at any point.
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+PLAY [simple task playbook for module] ****************************************************************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************************************************************************
+ok: [localhost]
+
+TASK [create file] ************************************************************************************************************************************************************
+changed: [localhost]
+
+PLAY RECAP ********************************************************************************************************************************************************************
+localhost                  : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp/
+.vbox-mikhailrusakovich-ipc/  playbook_file.txt             steam.pipe                    
+com.apple.launchd.ez5CbUkdyw/ powerlog/                     test.txt                      
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp//playbook_file.txt 
+more text from playbook(
+```
 6. Проверьте через playbook на идемпотентность.
+```commandline
+Mikhails-MacBook-Pro:ansible mikhailrusakovich$ ansible-playbook ./playbooks/site.yml 
+[WARNING]: You are running the development version of Ansible. You should only run Ansible from "devel" if you are modifying the Ansible engine, or trying out features under
+development. This is a rapidly changing source of code and can become unstable at any point.
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+PLAY [simple task playbook for module] ****************************************************************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************************************************************************
+ok: [localhost]
+
+TASK [create file] ************************************************************************************************************************************************************
+ok: [localhost]
+
+PLAY RECAP ********************************************************************************************************************************************************************
+localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+```
 7. Выйдите из виртуального окружения.
 8. Инициализируйте новую collection: `ansible-galaxy collection init my_own_namespace.yandex_cloud_elk`
 9. В данную collection перенесите свой module в соответствующую директорию.
