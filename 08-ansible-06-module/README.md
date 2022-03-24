@@ -160,8 +160,8 @@ if __name__ == '__main__':
 ```commandline
 (venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ python -m ansible.modules.my_own_module input.json 
 
-{"changed": true, "original_message": "content of the file", "message": "file was written", "invocation": {"module_args": {"path": "/tmp/test.txt", "content": "content of the file"}}}
-(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp/test.txt 
+{"changed": true, "original_message": "content of the file", "message": "file was written", "invocation": {"module_args": {"path": "/tmp/tnew_file.txt", "content": "content of the file"}}}
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp/new_file.txt 
 content of the file 
 ```
 5. Напишите single task playbook и используйте module в нём.
@@ -185,9 +185,9 @@ localhost                  : ok=2    changed=1    unreachable=0    failed=0    s
 
 (venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp/
 .vbox-mikhailrusakovich-ipc/  playbook_file.txt             steam.pipe                    
-com.apple.launchd.ez5CbUkdyw/ powerlog/                     test.txt                      
-(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp//playbook_file.txt 
-more text from playbook(
+com.apple.launchd.ez5CbUkdyw/ powerlog/                     new_file.txt                      
+(venv) Mikhails-MacBook-Pro:ansible mikhailrusakovich$ cat /tmp/new_file.txt 
+content of the file
 ```
 6. Проверьте через playbook на идемпотентность.
 ```commandline
@@ -212,14 +212,60 @@ localhost                  : ok=2    changed=0    unreachable=0    failed=0    s
 ```
 7. Выйдите из виртуального окружения.
 8. Инициализируйте новую collection: `ansible-galaxy collection init my_own_namespace.yandex_cloud_elk`
+```commandline
+Mikhails-MacBook-Pro:my_own_collection mikhailrusakovich$ ansible-galaxy collection init my_own_namespace.yandex_cloud_elk
+- Collection my_own_namespace.yandex_cloud_elk was created successfully
+
+```
 9. В данную collection перенесите свой module в соответствующую директорию.
 10. Single task playbook преобразуйте в single task role и перенесите в collection. У role должны быть default всех параметров module
 11. Создайте playbook для использования этой role.
 12. Заполните всю документацию по collection, выложите в свой репозиторий, поставьте тег `1.0.0` на этот коммит.
 13. Создайте .tar.gz этой collection: `ansible-galaxy collection build` в корневой директории collection.
+```commandline
+Mikhails-MacBook-Pro:yandex_cloud_elk mikhailrusakovich$ ansible-galaxy collection build
+Created collection for my_own_namespace.yandex_cloud_elk at /Users/mikhailrusakovich/devops-netology/mnt-homeworks/my_own_collection/my_own_namespace/yandex_cloud_elk/my_own_namespace-yandex_cloud_elk-1.0.0.tar.gz
+
+```
 14. Создайте ещё одну директорию любого наименования, перенесите туда single task playbook и архив c collection.
 15. Установите collection из локального архива: `ansible-galaxy collection install <archivename>.tar.gz`
+```commandline
+Mikhails-MacBook-Pro:test_collection mikhailrusakovich$ ansible-galaxy collection install my_own_namespace-yandex_cloud_elk-1.0.0.tar.gz 
+Starting galaxy collection install process
+Process install dependency map
+Starting collection install process
+Installing 'my_own_namespace.yandex_cloud_elk:1.0.0' to '/Users/mikhailrusakovich/.ansible/collections/ansible_collections/my_own_namespace/yandex_cloud_elk'
+my_own_namespace.yandex_cloud_elk:1.0.0 was installed successfully
+
+```
 16. Запустите playbook, убедитесь, что он работает.
+```commandline
+Mikhails-MacBook-Pro:ansible mikhailrusakovich$ ansible-playbook ./playbooks/site.yml 
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost
+does not match 'all'
+
+PLAY [test my module] **********************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************
+ok: [localhost]
+
+TASK [run my module] ***********************************************************************************
+ok: [localhost]
+
+TASK [dump test_out] ***********************************************************************************
+ok: [localhost] => {
+    "msg": {
+        "changed": false,
+        "failed": false,
+        "message": "file exists",
+        "original_message": "content of the file"
+    }
+}
+
+PLAY RECAP *********************************************************************************************
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+```
 17. В ответ необходимо прислать ссылку на репозиторий с collection
 
 ## Необязательная часть

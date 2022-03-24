@@ -1,4 +1,4 @@
 ---
 # defaults file for myrole
   my_path: "/tmp/new_file.txt"
-  my_content: "Netology MNT-11 Devops-11"
+  my_content: "content of the file"
