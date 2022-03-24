@@ -1,0 +1,5 @@
+---
+- name: Role from my_own_collection
+  my_own_collection:
+    path: "{{ my_path }}"
+    content: "{{ my_content }}"
