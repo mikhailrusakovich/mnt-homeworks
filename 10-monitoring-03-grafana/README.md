@@ -70,7 +70,7 @@ node_filesystem_free_bytes{job="nodeexporter", instance="nodeexporter:9100", mou
 Далее скопируйте отображаемое json-содержимое в отдельный файл и сохраните его.
 
 В решении задания - приведите листинг этого файла.
-
+```
 {
   "annotations": {
     "list": [
@@ -622,6 +622,7 @@ node_filesystem_free_bytes{job="nodeexporter", instance="nodeexporter:9100", mou
   "uid": "qRbWFZUnz",
   "version": 11
 }
+```
 
 ---
 
