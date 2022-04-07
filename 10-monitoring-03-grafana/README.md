@@ -29,6 +29,9 @@
 
 Решение домашнего задания - скриншот веб-интерфейса grafana со списком подключенных Datasource.
 
+<img width="1440" alt="Screen Shot 2022-04-06 at 7 07 39 PM" src="https://user-images.githubusercontent.com/87324543/162099637-44738cf3-bcf8-4fee-88ed-9250f85e32c9.png">
+
+
 ## Задание 2
 Изучите самостоятельно ресурсы:
 - [promql-for-humans](https://timber.io/blog/promql-for-humans/#cpu-usage-by-instance)
@@ -36,11 +39,20 @@
 
 Создайте Dashboard и в ней создайте следующие Panels:
 - Утилизация CPU для nodeexporter (в процентах, 100-idle)
+100 - (avg by (instance) (rate(node_cpu_seconds_total{job="nodeexporter",mode!="idle"}[5m])) * 100)
 - CPULA 1/5/15
+100 - (avg by (instance) (rate(node_cpu_seconds_total{job="nodeexporter",mode="idle"}[1m])) * 100)
+100 - (avg by (instance) (rate(node_cpu_seconds_total{job="nodeexporter",mode="idle"}[5m])) * 100)
+100 - (avg by (instance) (rate(node_cpu_seconds_total{job="nodeexporter",mode="idle"}[15m])) * 100)
 - Количество свободной оперативной памяти
+node_memory_MemFree_bytes{job="nodeexporter"}
 - Количество места на файловой системе
+node_filesystem_free_bytes{job="nodeexporter", instance="nodeexporter:9100", mountpoint="/var/lib"}
 
 Для решения данного ДЗ приведите promql запросы для выдачи этих метрик, а также скриншот получившейся Dashboard.
+
+<img width="1440" alt="Screen Shot 2022-04-06 at 9 02 57 PM" src="https://user-images.githubusercontent.com/87324543/162099680-187f112e-2dc1-46c7-8666-d61215f62c76.png">
+
 
 ## Задание 3
 Создайте для каждой Dashboard подходящее правило alert (можно обратиться к первой лекции в блоке "Мониторинг").
