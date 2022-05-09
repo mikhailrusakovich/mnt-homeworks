@@ -1,0 +1,6 @@
+projectKey=netology-mnt-11
+serverUrl=http://84.201.159.188:9000
+serverVersion=9.1.0.47736
+dashboardUrl=http://84.201.159.188:9000/dashboard?id=netology-mnt-11
+ceTaskId=AX-Z84QIqqZXZ2brcsMG
+ceTaskUrl=http://84.201.159.188:9000/api/ce/task?id=AX-Z84QIqqZXZ2brcsMG
